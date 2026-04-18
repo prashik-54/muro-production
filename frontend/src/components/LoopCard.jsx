@@ -85,8 +85,9 @@ if(commentRef.current && !commentRef.current.contains(event.target) ){
 
 if(showComment){
     document.addEventListener("mousedown",handleClickOutside)
-}else{
-    document.removeEventListener("mousedown",handleClickOutside)
+    return ()=>{
+        document.removeEventListener("mousedown",handleClickOutside)
+    }
 }
 
 },[showComment])
@@ -169,7 +170,7 @@ if(showComment){
 
 
 
-            <video ref={videoRef} autoPlay muted loop src={loop?.media} className='w-full max-h-full' onClick={handleClick} onTimeUpdate={handleTimeUpdate} onDoubleClick={handleLikeOnDoubleClick}/>
+            <video ref={videoRef} autoPlay muted={isMute} loop src={loop?.media} className='w-full max-h-full' onClick={handleClick} onTimeUpdate={handleTimeUpdate} onDoubleClick={handleLikeOnDoubleClick}/>
             <div className='absolute top-[20px] z-[100] right-[20px] ' onClick={()=>setIsMute(prev=>!prev)}>
    {!isMute?<FiVolume2 className='w-[20px] h-[20px] text-white font-semibold'/>:<FiVolumeX className='w-[20px] h-[20px] text-white font-semibold'/>}
             </div>

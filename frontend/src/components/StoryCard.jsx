@@ -8,7 +8,7 @@ import { FaEye } from "react-icons/fa6";
 function StoryCard({storyData}) {
   const {userData}=useSelector(state=>state.user)
   const [showViewers,setShowViewers]=useState(false)
-    const navigate=useNavigate({storyData})
+    const navigate=useNavigate()
     const [progress,setProgress]=useState(0)
 
     useEffect(()=>{

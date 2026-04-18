@@ -52,23 +52,22 @@ export const like = async (req, res) => {
             post.likes = post.likes.filter(id => id.toString() != req.userId.toString())
         } else {
             post.likes.push(req.userId)
-            if (post.author._id != req.userId) {
+            const authorId = post.author?._id?.toString() || post.author?.toString()
+            if (authorId !== req.userId.toString()) {
                 const notification = await Notification.create({
                     sender: req.userId,
-                    receiver: post.author._id,
+                    receiver: authorId,
                     type: "like",
                     post: post._id,
-                    message:"liked your post"
+                    message: "liked your post"
                 })
                 const populatedNotification = await Notification.findById(notification._id).populate("sender receiver post")
-                const receiverSocketId=getSocketId(post.author._id)
-                if(receiverSocketId){
-                    io.to(receiverSocketId).emit("newNotification",populatedNotification)
+                const receiverSocketId = getSocketId(authorId)
+                if (receiverSocketId) {
+                    io.to(receiverSocketId).emit("newNotification", populatedNotification)
                 }
-            
             }
         }
-
 
         await post.save()
         await post.populate("author", "name userName profileImage")
@@ -94,24 +93,24 @@ export const comment = async (req, res) => {
             author: req.userId,
             message
         })
-         if (post.author._id != req.userId) {
-                const notification = await Notification.create({
-                    sender: req.userId,
-                    receiver: post.author._id,
-                    type: "comment",
-                    post: post._id,
-                    message:"commented on your post"
-                })
-                const populatedNotification = await Notification.findById(notification._id).populate("sender receiver post")
-                const receiverSocketId=getSocketId(post.author._id)
-                if(receiverSocketId){
-                    io.to(receiverSocketId).emit("newNotification",populatedNotification)
-                }
-            
+        const authorId = post.author?._id?.toString() || post.author?.toString()
+        if (authorId !== req.userId.toString()) {
+            const notification = await Notification.create({
+                sender: req.userId,
+                receiver: authorId,
+                type: "comment",
+                post: post._id,
+                message: "commented on your post"
+            })
+            const populatedNotification = await Notification.findById(notification._id).populate("sender receiver post")
+            const receiverSocketId = getSocketId(authorId)
+            if (receiverSocketId) {
+                io.to(receiverSocketId).emit("newNotification", populatedNotification)
             }
+        }
         await post.save()
-        await post.populate("author", "name userName profileImage"),
-            await post.populate("comments.author")
+        await post.populate("author", "name userName profileImage")
+        await post.populate("comments.author")
         io.emit("commentedPost", {
             postId: post._id,
             comments: post.comments

@@ -25,6 +25,12 @@ const userSlice=createSlice({
         setNotificationData:(state,action)=>{
         state.notificationData=action.payload
        },
+       addNotification:(state,action)=>{
+        if(!Array.isArray(state.notificationData)){
+          state.notificationData=[]
+        }
+        state.notificationData.unshift(action.payload)
+       },
        setFollowing:(state,action)=>{
         state.following=action.payload
        },
@@ -40,5 +46,5 @@ if(state.following.includes(targetUserId)){
 
 })
 
-export const {setUserData,setSuggestedUsers,setProfileData,toggleFollow,setFollowing,setSearchData,setNotificationData}=userSlice.actions
+export const {setUserData,setSuggestedUsers,setProfileData,toggleFollow,setFollowing,setSearchData,setNotificationData,addNotification}=userSlice.actions
 export default userSlice.reducer

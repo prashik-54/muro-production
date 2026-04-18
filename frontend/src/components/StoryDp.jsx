@@ -11,6 +11,9 @@ const{ userData}=useSelector(state=>state.user)
 const{ storyData,storyList}=useSelector(state=>state.story)
 const [viewed,setViewed]=useState(false)
 useEffect(()=>{
+  if(!userData){
+    return
+  }
   if(story?.viewers?.some((viewer)=>
   viewer?._id?.toString()===userData._id.toString() || viewer?.toString()==userData._id.toString()
 )){
@@ -20,11 +23,11 @@ useEffect(()=>{
 }
 
 
-},[story,userData,storyData,storyList])
+},[story,userData])
 const handleViewers=async ()=>{
+  if(!story) return
   try {
-    const result=await axios.get(`${serverUrl}/api/story/view/${story._id}`,{withCredentials:true})
-    
+    await axios.get(`${serverUrl}/api/story/view/${story._id}`,{withCredentials:true})
   } catch (error) {
     console.log(error)
   }
@@ -38,9 +41,9 @@ const handleClick=()=>{
       handleViewers()
     navigate(`/story/${userData?.userName}`)
  
-  }else {
+  }else if(story) {
      handleViewers()
-navigate(`/story/${userName}`)
+     navigate(`/story/${userName}`)
   }
 }
   return (

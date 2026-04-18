@@ -34,27 +34,27 @@ export const like=async (req,res)=>{
             return res.status(400).json({message:"loop not found"})
         }
 
-        const alreadyLiked=loop.likes.some(id=>id.toString()==req.userId.toString())
+        const alreadyLiked = loop.likes.some(id => id.toString() == req.userId.toString())
 
-        if(alreadyLiked){
-            loop.likes=loop.likes.filter(id=>id.toString()!=req.userId.toString())
-        }else{
+        if (alreadyLiked) {
+            loop.likes = loop.likes.filter(id => id.toString() != req.userId.toString())
+        } else {
             loop.likes.push(req.userId)
-             if (loop.author._id != req.userId) {
-                            const notification = await Notification.create({
-                                sender: req.userId,
-                                receiver: loop.author._id,
-                                type: "like",
-                                loop: loop._id,
-                                message:"liked your loop"
-                            })
-                            const populatedNotification = await Notification.findById(notification._id).populate("sender receiver loop")
-                            const receiverSocketId=getSocketId(loop.author._id)
-                            if(receiverSocketId){
-                                io.to(receiverSocketId).emit("newNotification",populatedNotification)
-                            }
-                        
-                        }
+            const authorId = loop.author?._id?.toString() || loop.author?.toString()
+            if (authorId !== req.userId.toString()) {
+                const notification = await Notification.create({
+                    sender: req.userId,
+                    receiver: authorId,
+                    type: "like",
+                    loop: loop._id,
+                    message: "liked your loop"
+                })
+                const populatedNotification = await Notification.findById(notification._id).populate("sender receiver loop")
+                const receiverSocketId = getSocketId(authorId)
+                if (receiverSocketId) {
+                    io.to(receiverSocketId).emit("newNotification", populatedNotification)
+                }
+            }
         }
         await loop.save()
         await loop.populate("author","name userName profileImage")
@@ -77,24 +77,24 @@ export const comment=async (req,res)=>{
             return res.status(400).json({message:"loop not found"})
         }
         loop.comments.push({
-            author:req.userId,
+            author: req.userId,
             message
         })
-          if (loop.author._id != req.userId) {
-                            const notification = await Notification.create({
-                                sender: req.userId,
-                                receiver: loop.author._id,
-                                type: "comment",
-                                loop: loop._id,
-                                message:"commented on your loop"
-                            })
-                            const populatedNotification = await Notification.findById(notification._id).populate("sender receiver loop")
-                            const receiverSocketId=getSocketId(loop.author._id)
-                            if(receiverSocketId){
-                                io.to(receiverSocketId).emit("newNotification",populatedNotification)
-                            }
-                        
-                        }
+        const authorId = loop.author?._id?.toString() || loop.author?.toString()
+        if (authorId !== req.userId.toString()) {
+            const notification = await Notification.create({
+                sender: req.userId,
+                receiver: authorId,
+                type: "comment",
+                loop: loop._id,
+                message: "commented on your loop"
+            })
+            const populatedNotification = await Notification.findById(notification._id).populate("sender receiver loop")
+            const receiverSocketId = getSocketId(authorId)
+            if (receiverSocketId) {
+                io.to(receiverSocketId).emit("newNotification", populatedNotification)
+            }
+        }
         await loop.save()
        await loop.populate("author","name userName profileImage"),
        await loop.populate("comments.author")

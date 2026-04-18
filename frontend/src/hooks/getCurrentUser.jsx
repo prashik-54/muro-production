@@ -1,13 +1,12 @@
 import axios from 'axios'
 import React, { useEffect } from 'react'
 import { serverUrl } from '../App'
-import { useDispatch, useSelector } from 'react-redux'
-import { setFollowing, setUserData } from '../redux/userSlice'
+import { useDispatch } from 'react-redux'
+import { setUserData } from '../redux/userSlice'
 import { setCurrentUserStory } from '../redux/storySlice'
 
 function getCurrentUser() {
     const dispatch=useDispatch()
-    const {storyData}=useSelector(state=>state.story)
   useEffect(()=>{
 const fetchUser=async ()=>{
     try {
@@ -19,7 +18,7 @@ const fetchUser=async ()=>{
     }
 }
 fetchUser()
-  },[storyData])
+  },[dispatch])
 }
 
 export default getCurrentUser

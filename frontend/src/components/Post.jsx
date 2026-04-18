@@ -41,6 +41,7 @@ const dispatch=useDispatch()
 
       const updatedPosts=postData.map(p=>p._id==post._id?updatedPost:p)
       dispatch(setPostData(updatedPosts))
+      setMessage("")
     } catch (error) {
       console.log(error.response)
     }
@@ -65,8 +66,10 @@ socket?.on("commentedPost",(updatedData)=>{
      dispatch(setPostData(updatedPosts))
     })
 
-    return ()=>{socket?.off("likedPost")
-               socket?.off("CommentedPost")}
+    return ()=>{
+      socket?.off("likedPost")
+      socket?.off("commentedPost")
+    }
   },[socket,postData,dispatch])
   return (
     <div className='w-[90%]   flex flex-col gap-[10px] bg-white items-center shadow-2xl shadow-[#00000058] rounded-2xl pb-[20px]'>

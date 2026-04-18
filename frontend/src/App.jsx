@@ -24,7 +24,7 @@ import getPrevChatUsers from './hooks/getPrevChatUsers'
 import Search from './pages/Search'
 import getAllNotifications from './hooks/getAllNotifications'
 import Notifications from './pages/Notifications'
-import { setNotificationData } from './redux/userSlice'
+import { addNotification } from './redux/userSlice'
 export const serverUrl=import.meta.env.VITE_SERVER_URL || "http://localhost:8000"
 function App() {
    getCurrentUser()
@@ -35,39 +35,40 @@ function App() {
    getFollowingList()
    getPrevChatUsers()
    getAllNotifications()
-  const {userData,notificationData}=useSelector(state=>state.user)
+  const {userData}=useSelector(state=>state.user)
    
     const {socket}=useSelector(state=>state.socket)
     const dispatch=useDispatch()
  useEffect(()=>{
-  if(userData){
-    const socketIo=io(`${serverUrl}`,{
-      query:{
-        userId:userData._id
-      }
-    })
-dispatch(setSocket(socketIo))
+  if(!userData) return
 
-
-socketIo.on('getOnlineUsers',(users)=>{
-  dispatch(setOnlineUsers(users))
-  console.log(users)
-})
-
-
-return ()=>socketIo.close()
-  }else{
-    if(socket){
-      socket.close()
-      dispatch(setSocket(null))
+  const socketIo = io(`${serverUrl}`,{
+    query:{
+      userId:userData._id
     }
+  })
+
+  dispatch(setSocket(socketIo))
+
+  socketIo.on('getOnlineUsers',(users)=>{
+    dispatch(setOnlineUsers(users))
+  })
+
+  return ()=>{
+    socketIo.close()
   }
- },[userData])
+ },[userData,dispatch])
 
-
-socket?.on("newNotification",(noti)=>{
-  dispatch(setNotificationData([...notificationData,noti]))
-})
+ useEffect(()=>{
+   if(!socket) return
+   const handleNewNotification=(noti)=>{
+     dispatch(addNotification(noti))
+   }
+   socket.on("newNotification",handleNewNotification)
+   return ()=>{
+     socket.off("newNotification",handleNewNotification)
+   }
+ },[socket,dispatch])
 
   return (
     <Routes>

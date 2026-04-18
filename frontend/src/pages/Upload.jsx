@@ -46,11 +46,12 @@ const uploadPost=async ()=>{
         formData.append("mediaType",mediaType)
         formData.append("media",backendMedia)
         const result=await axios.post(`${serverUrl}/api/post/upload`,formData,{withCredentials:true})
-       dispatch(setPostData([...postData,result.data]))
+       dispatch(setPostData([...(postData||[]),result.data]))
        setLoading(false)
        navigate("/")
     } catch (error) {
         console.log(error)
+        setLoading(false)
     }
 }
 
@@ -65,6 +66,7 @@ const uploadStory=async ()=>{
        navigate("/")
     } catch (error) {
         console.log(error)
+        setLoading(false)
     }
 }
 const uploadLoop=async ()=>{
@@ -73,11 +75,12 @@ const uploadLoop=async ()=>{
         formData.append("caption",caption)
         formData.append("media",backendMedia)
         const result=await axios.post(`${serverUrl}/api/loop/upload`,formData,{withCredentials:true})
-         dispatch(setLoopData([...loopData,result.data]))
+         dispatch(setLoopData([...(loopData||[]),result.data]))
          setLoading(false)
        navigate("/")
     } catch (error) {
         console.log(error)
+        setLoading(false)
     }
 }
 

@@ -46,6 +46,7 @@ const handleSendMessage=async (e)=>{
 }
 
 const getAllMessages=async ()=>{
+  if(!selectedUser) return
   try {
     const result=await axios.get(`${serverUrl}/api/message/getAll/${selectedUser._id}`,{withCredentials:true})
     dispatch(setMessages(result.data))
@@ -54,15 +55,17 @@ const getAllMessages=async ()=>{
   }
 }
 useEffect(()=>{
-getAllMessages()
-},[])
+  getAllMessages()
+},[selectedUser])
 
 useEffect(()=>{
-socket?.on("newMessage",(mess)=>{
-  dispatch(setMessages([...messages,mess]))
-})
-return ()=>socket?.off("newMessage")
-},[messages,setMessages])
+  if(!socket) return
+  const handleNewMessage=(mess)=>{
+    dispatch(setMessages([...messages,mess]))
+  }
+  socket.on("newMessage",handleNewMessage)
+  return ()=>socket?.off("newMessage",handleNewMessage)
+},[socket,dispatch,messages])
 
   return (
     <div className='w-full h-[100vh] bg-black relative'>
