@@ -15,13 +15,16 @@ dotenv.config()
 
 const port = process.env.PORT || 5000
 
-// Update allowed origins to include any Vercel deployment URL
-const allowedOrigins = [
-  "https://muroui.onrender.com",
-  "http://localhost:5173",
-  "http://localhost:3000",
-  /\.vercel\.app$/ // This allows all your Vercel preview/production links
-]
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(",").map((origin) => origin.trim()).filter(Boolean)
+  : [
+      "https://muroui.onrender.com",
+      "https://muro-frontend.onrender.com",
+      "http://localhost:5173",
+      "http://127.0.0.1:5173",
+      "http://localhost:3000",
+      "http://127.0.0.1:3000"
+    ]
 
 app.use(cors({
   origin: allowedOrigins,
@@ -44,15 +47,8 @@ app.get("/", (req, res) => {
   res.send("Muro API is running...")
 })
 
-// CRITICAL: Connect DB before exporting (Vercel specific)
 connectDb()
 
-// Only listen if NOT running on Vercel (local development)
-if (process.env.NODE_ENV !== 'production') {
-  server.listen(port, () => {
-    console.log(`Server started on port ${port}`)
-  })
-}
-
-// Export the app for Vercel's serverless handler
-export default app
+server.listen(port, () => {
+  console.log(`Server started on port ${port}`)
+})
