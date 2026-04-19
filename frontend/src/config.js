@@ -1,1 +1,1 @@
-export const serverUrl = import.meta.env.VITE_SERVER_URL || "http://localhost:8000";
+export const serverUrl = import.meta.env.VITE_SERVER_URL || (import.meta.env.DEV ? "http://localhost:8000" : "");
