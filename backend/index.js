@@ -18,8 +18,6 @@ dotenv.config()
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-dotenv.config()
-
 const port = process.env.PORT || 5000
 
 const allowedOrigins = process.env.ALLOWED_ORIGINS
@@ -48,17 +46,17 @@ app.use("/api/loop", loopRouter)
 app.use("/api/story", storyRouter)
 app.use("/api/message", messageRouter)
 
+// Health route for API status
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok", service: "Muro API" })
+})
+
 // Serve static files from the React app build directory
 app.use(express.static(path.join(__dirname, '../frontend/dist')))
 
 // Catch all handler: send back React's index.html file for any non-API routes
-app.get('*', (req, res) => {
+app.get('/*', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/dist/index.html'))
-})
-
-// Root route for testing if backend is alive
-app.get("/", (req, res) => {
-  res.send("Muro API is running...")
 })
 
 connectDb()
