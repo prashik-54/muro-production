@@ -1,27 +1,17 @@
 services:
   - type: web_service
-    name: muro-backend
+    name: muro-production
     env: node
     plan: free
     region: oregon
     branch: main
-    buildCommand: cd backend && npm install
-    startCommand: cd backend && npm run start
+    buildCommand: npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend
+    startCommand: npm start --prefix backend
     autoDeploy: true
     envVars:
       - key: ALLOWED_ORIGINS
-        value: "https://muro-frontend.onrender.com,http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000,http://127.0.0.1:3000"
+        value: "https://muro-production.onrender.com,http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000,http://127.0.0.1:3000"
       - key: SOCKET_ORIGINS
-        value: "https://muro-frontend.onrender.com,http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000,http://127.0.0.1:3000"
-  - type: static_site
-    name: muro-frontend
-    env: node
-    plan: free
-    region: oregon
-    branch: main
-    buildCommand: cd frontend && npm install && npm run build
-    publishPath: frontend/dist
-    autoDeploy: true
-    envVars:
+        value: "https://muro-production.onrender.com,http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000,http://127.0.0.1:3000"
       - key: VITE_SERVER_URL
-        value: "https://muro-backend.onrender.com"
+        value: "https://muro-production.onrender.com"

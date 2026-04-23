@@ -10,6 +10,13 @@ import loopRouter from "./routes/loop.routes.js"
 import storyRouter from "./routes/story.routes.js"
 import messageRouter from "./routes/message.routes.js"
 import { app, server } from "./socket.js"
+import path from "path"
+import { fileURLToPath } from 'url'
+
+dotenv.config()
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 dotenv.config()
 
@@ -40,6 +47,14 @@ app.use("/api/post", postRouter)
 app.use("/api/loop", loopRouter)
 app.use("/api/story", storyRouter)
 app.use("/api/message", messageRouter)
+
+// Serve static files from the React app build directory
+app.use(express.static(path.join(__dirname, '../frontend/dist')))
+
+// Catch all handler: send back React's index.html file for any non-API routes
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/dist/index.html'))
+})
 
 // Root route for testing if backend is alive
 app.get("/", (req, res) => {
