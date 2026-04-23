@@ -25,7 +25,8 @@ import Search from './pages/Search'
 import getAllNotifications from './hooks/getAllNotifications'
 import Notifications from './pages/Notifications'
 import { addNotification } from './redux/userSlice'
-export const serverUrl=import.meta.env.VITE_SERVER_URL || "http://localhost:8000"
+import { serverUrl } from './config'
+
 function App() {
    getCurrentUser()
    getSuggestedUsers()

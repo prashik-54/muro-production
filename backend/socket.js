@@ -7,7 +7,6 @@ const server = http.createServer(app)
 const socketOrigins = process.env.SOCKET_ORIGINS
   ? process.env.SOCKET_ORIGINS.split(",").map((origin) => origin.trim()).filter(Boolean)
   : [
-      "https://muroui.onrender.com",
       "https://muro-frontend.onrender.com",
       "http://localhost:5173",
       "http://127.0.0.1:5173",
