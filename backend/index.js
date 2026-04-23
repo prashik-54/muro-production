@@ -25,7 +25,7 @@ const port = process.env.PORT || 5000
 const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(",").map((origin) => origin.trim()).filter(Boolean)
   : [
-      "https://muro-frontend.onrender.com",
+      "https://muro-production.onrender.com",
       "http://localhost:5173",
       "http://127.0.0.1:5173",
       "http://localhost:3000",
